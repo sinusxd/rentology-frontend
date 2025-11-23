@@ -8,6 +8,7 @@ import RegisterForm from "./pages/register/RegisterForm";
 import Profile from './pages/profile/Profile';
 import AddProperty from "./pages/addProperty/AddProperty";
 import PropertyPage from "./pages/propertyPage/PropertyPage";
+import AuthCallback from "./pages/authCallback/AuthCallback";
 
 const AppRouter: FC = () => {
     const {store} = useContext(AuthContext)
@@ -35,6 +36,7 @@ const AppRouter: FC = () => {
             <Routes>
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/register" element={<RegisterForm/>}/>
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="*" element={<Navigate to={"/login"} />} />
             </Routes>
         )

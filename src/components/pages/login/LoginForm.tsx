@@ -14,7 +14,7 @@ const LoginForm: FC = () => {
     const [password, setPassword] = useState<string>('');
     const [emailError, setEmailError] = useState<boolean>(false);
     const [passwordError, setPasswordError] = useState<boolean>(false);
-    const [authError, setAuthError] = useState<boolean>(false)
+    const [authError, setAuthError] = useState<boolean>(false);
     const {store} = useContext(AuthContext);
 
     const handleLogin = () => {
@@ -43,6 +43,46 @@ const LoginForm: FC = () => {
         }
     };
 
+    const handleAuth0Login = async () => {
+        console.log('[auth0] click');
+        try {
+            const state = crypto.randomUUID
+                ? crypto.randomUUID()
+                : Math.random().toString(36).slice(2);
+            localStorage.setItem('oauth_state', state);
+
+            const redirectUrl = `${window.location.origin}/auth/callback`;
+            console.log('[auth0] redirectUrl =', redirectUrl);
+
+            const res = await fetch(
+                `/api/v1/auth/oauth2/url?provider=auth0&redirect_url=${encodeURIComponent(
+                    redirectUrl
+                )}&state=${encodeURIComponent(state)}`
+            );
+
+            console.log('[auth0] response status =', res.status);
+
+            if (!res.ok) {
+                console.error('[auth0] failed to get url');
+                return;
+            }
+
+            const data = await res.json();
+            console.log('[auth0] response json =', data);
+
+            const authUrl = data.authUrl || data.auth_url;
+            console.log('[auth0] authUrl =', authUrl);
+
+            if (authUrl) {
+                window.location.href = authUrl;
+            } else {
+                console.error('[auth0] authUrl is empty');
+            }
+        } catch (e) {
+            console.error('[auth0] error', e);
+        }
+    };
+
     return (
         <div className={cl.loginPage}>
             <div className={cl.imageContainerLeft} style={{backgroundImage: `url(${peopleImage1})`}}></div>
@@ -55,7 +95,7 @@ const LoginForm: FC = () => {
                         value={email}
                         type="email"
                         placeholder="Почта"
-                        className={emailError ? cl.errorBorder : ''} // добавляем класс для ошибки
+                        className={emailError ? cl.errorBorder : ''}
                     />
                     {authError && <div style={{color: 'red'}}>Неправильный логин или пароль</div>}
                     <LoginInput
@@ -63,9 +103,15 @@ const LoginForm: FC = () => {
                         value={password}
                         type="password"
                         placeholder="Пароль"
-                        className={passwordError ? cl.errorBorder : ''} // добавляем класс для ошибки
+                        className={passwordError ? cl.errorBorder : ''}
                     />
-                    <LoginButton onClick={handleLogin}>Авторизация</LoginButton>
+                    <LoginButton onClick={handleLogin}>
+                        Авторизация
+                    </LoginButton>
+
+                    <LoginButton onClick={handleAuth0Login}>
+                        Войти через Auth0
+                    </LoginButton>
                 </div>
                 <Link className={cl.link} to="/register">Создать аккаунт</Link>
             </div>

@@ -1,10 +1,21 @@
 import React from 'react';
-import cl from './LoginButton.module.css'
+import cl from './LoginButton.module.css';
+
 interface LoginButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
-const LoginButton : React.FC<LoginButtonProps>  = (props) => {
+const LoginButton: React.FC<LoginButtonProps> = ({
+                                                     children,
+                                                     type = 'button',
+                                                     className,
+                                                     ...rest
+                                                 }) => {
     return (
-        <button {...props} className={cl.loginButton}>
+        <button
+            type={type}
+            className={`${cl.loginButton} ${className ?? ''}`}
+            {...rest}
+        >
+            {children}
         </button>
     );
 };

@@ -41,6 +41,19 @@ export default class Store {
         }
     }
 
+    async loginOAuth(userId: bigint) {
+        try {
+            const user = await UserService.getUserById(userId)
+            localStorage.setItem("id", String(user.data.id))
+            this.setUser(user.data)
+            this.setAuth(true)
+
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }
+
     async register(email: string, password: string) {
         try {
             await AuthService.register(email, password)
